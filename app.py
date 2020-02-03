@@ -1,8 +1,8 @@
 """Flask app for Cupcakes"""
 
-from flask import Flask, render_template, redirect, jsonify, request
-from models import db, connect_db, Cupcake, serialize_cupcake
-import requests
+from flask import Flask, jsonify, request
+from models import db, connect_db, Cupcake
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgres:///cupcakes"
@@ -12,11 +12,11 @@ app.config["SQLALCHEMY_ECHO"] = True
 connect_db(app)
 
 
-@app.route("/api/cupcakes/")
+@app.route("/api/cupcakes")
 def show_cupcakes():
     """show all cupcakes"""
     cupcakes = Cupcake.query.all()
-    serialized = [serialize_cupcake(c) for c in cupcakes]
+    serialized = [c.serialize() for c in cupcakes]
 
     return jsonify(cupcakes=serialized)
 
@@ -26,7 +26,7 @@ def show_cupcake(cupcake_id):
     """show info about a single cupcake"""
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
-    serialized = serialize_cupcake(cupcake)
+    serialized = cupcake.serialize()
 
     return jsonify(cupcake=serialized)
 
@@ -35,16 +35,35 @@ def show_cupcake(cupcake_id):
 def create_cupcake():
     """ create cupcake and add to db"""
 
-    new_cupcake = Cupcake(
+    cupcake = Cupcake(
         flavor=request.json["flavor"],
         size=request.json["size"],
         rating=request.json["rating"],
         image=request.json["image"],
     )
 
-    db.session.add(new_cupcake)
+    db.session.add(cupcake)
     db.session.commit()
 
-    serialized = serialize_cupcake(new_cupcake)
+    return (jsonify(cupcake=cupcake.serialize()), 201)
 
-    return (jsonify(cupcake=serialized), 201)
+
+@app.route("/api/cupcakes/<int:cupcake_id>", methods=["PATCH"])
+def edit_cupcake(cupcake_id):
+    """ Edit the current cupcake """
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    cupcake.update()
+    serialized = cupcake.serialize()
+
+    return(jsonify(cupcake=serialized), 200)
+
+
+@app.route("/api/cupcakes/<int:cupcake_id>", methods=["DELETE"])
+def delete_cupcake(cupcake_id):
+    """ DELETE this cupcake """
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    deleted = cupcake.delete()
+
+    return (jsonify(deleted=deleted), 200)
