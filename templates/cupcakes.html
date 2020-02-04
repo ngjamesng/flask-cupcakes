@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <ul id="cupcake-list">
+
+  </ul>
+
+  <form id="cupcake-form" action="/api/cupcakes" method="POST">
+    flavor <input name="flavor" type="text">
+    size <input name="size" type="text">    
+    rating <input name="rating" type="text">
+    image <input name="image" type="text">
+    <button>Submit!</button>
+  </form>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+let cupcakeForm = document.querySelector("#cupcake-form")
