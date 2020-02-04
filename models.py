@@ -12,13 +12,13 @@ def connect_db(app):
 
 
 class Cupcake(db.Model):
-
+    
     __tablename__ = "cupcakes"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     flavor = db.Column(db.String(30), nullable=False)
     size = db.Column(db.String(30), nullable=False)
-    rating = db.Column(db.Float, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
     image = db.Column(
         db.Text, default="https://thestayathomechef.com/wp-content/uploads/2017/12/Most-Amazing-Chocolate-Cupcakes-1-small.jpg", nullable=False)
 
@@ -39,7 +39,7 @@ class Cupcake(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-        return self.id
+        return "Deleted"
 
     def update(self):
         """ Updating this cupcake """

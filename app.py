@@ -1,6 +1,6 @@
 """Flask app for Cupcakes"""
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from models import db, connect_db, Cupcake
 
 
@@ -11,9 +11,14 @@ app.config["SQLALCHEMY_ECHO"] = True
 
 connect_db(app)
 
+@app.route("/")
+def render_cupcakes():
+    """ return HTML for list of cupcakes"""
+
+    return render_template("cupcakes.html")
 
 @app.route("/api/cupcakes")
-def show_cupcakes():
+def list_cupcakes():
     """show all cupcakes"""
     cupcakes = Cupcake.query.all()
     serialized = [c.serialize() for c in cupcakes]
@@ -22,7 +27,7 @@ def show_cupcakes():
 
 
 @app.route("/api/cupcakes/<int:cupcake_id>")
-def show_cupcake(cupcake_id):
+def get_cupcake(cupcake_id):
     """show info about a single cupcake"""
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
@@ -66,4 +71,4 @@ def delete_cupcake(cupcake_id):
     cupcake = Cupcake.query.get_or_404(cupcake_id)
     deleted = cupcake.delete()
 
-    return (jsonify(deleted=deleted), 200)
+    return (jsonify(message=deleted), 200)
